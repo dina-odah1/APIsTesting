@@ -9,9 +9,12 @@ import static io.restassured.RestAssured.given;
 
 public class GlobalAPICalls {
 
-    String usersBasePath = "/users";
-    String postsBasePath = "/posts";
-    String commentsBasePath = "/comments";
+    public String usersBasePath = "/users";
+    public String postsBasePath = "/posts";
+    public String commentsBasePath = "/comments";
+    public int usersStatusCode = 200;
+    public int postsStatusCode = 200;
+    public int commentsStatusCode = 200;
 
     public RequestSpecification requestCall(String apiBasePath)
     {
