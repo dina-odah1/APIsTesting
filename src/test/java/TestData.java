@@ -1,24 +1,36 @@
 
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.BeforeClass;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.restassured.RestAssured.*;
 
 public class TestData {
-    String username = "Delphine";
-    String host ="https://jsonplaceholder.typicode.com";
-    String usersBasePath = "/users";
-    String postsBasePath = "/posts";
-    String commentsBasePath = "/comments";
+
+    // Input Data that are meant to query with
+    List<String> userName = List.of("Delphine") ;
+
+
+    // Parameters returned by APIs response
+    List<String> actualUserName;
+    List<String> name;
+    List<String> email;
+
     int usersStatusCode = 200;
-    int userID;
+    List<Integer> userID;
+    List<Integer> actualUserId;
+    List<String> title;
+    List<String> body;
     int postID;
     List<Integer> userid2;
     List<Integer> postIDs;
     RequestSpecification request;
+    ArrayList<Integer> commentsID;
+    ArrayList<String> commentsEmail;
 
     @BeforeClass
     public static void postsService() {

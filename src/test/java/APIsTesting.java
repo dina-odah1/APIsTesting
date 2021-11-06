@@ -8,18 +8,25 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import jdk.jfr.Description;
+import org.apache.commons.lang3.ObjectUtils;
+import org.junit.jupiter.api.DisplayName;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.path.json.JsonPath.from;
+import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 
 public class APIsTesting {
 
@@ -30,108 +37,129 @@ public class APIsTesting {
     PostsService newPostsServiceCall = new PostsService();
 
     @Test
+    @DisplayName("Verify GET users by username")
+    @Description("Query the GET users API with certain username and store users data")
+    @BeforeClass
+    private void getUserData() {
+        Response userResponse = newUsersServicesCall.getUserDataByUsername(newTest.userName);
+        JsonPath jsonPath = userResponse.jsonPath();
+        newTest.actualUserName = jsonPath.get("username");
+        newTest.userID = jsonPath.get("id");
+        newTest.name = jsonPath.get("name");
+        newTest.email = jsonPath.get("email");
+    }
+    @Test
+    @DisplayName("Verify GET user posts by userId")
+    @Description("Query the GET posts API with certain userId and store posts data")
+    @BeforeClass
+    private void getUserPosts() {
+        Response postResponse = newPostsServiceCall.getPostsByUserId("userId", newTest.userID);
+        JsonPath jsonPath = postResponse.jsonPath();
+        newTest.title = jsonPath.get("title");
+        newTest.actualUserId = jsonPath.get("userId");
+        newTest.body = jsonPath.get("body");
+        newTest.postIDs = jsonPath.get("id");
+    }
 
-    @Description("Query Against the Users Service with certain given name and verify that the returned username matches given username")
-
+    @Test
+    @DisplayName("Verify GET users by username actually returns users with the right username")
+    @Description("Query get Users API with x username and verify that the returned username matches given username")
     public void verifySearchByUsername()
     {
-       newUsersServicesCall.getUserDataByUsername(newTest.username).then().assertThat().body("username", hasItem(newTest.username));
+       assertThat(newTest.actualUserName, equalTo(newTest.userName));
     }
 
     @Test
-    public void searchByUserName(){
-            baseURI = newTest.host;
-            basePath = newTest.usersBasePath;
-            RequestSpecification request = given();
-            Response response = get();
-            response.getBody();
-//            System.out.println("Response: " +response.asString());
-//            System.out.println("Status code : "+response.getStatusCode());
-
-//            String userName = response.body("userName");
-//            Assert.assertEquals(, username);
-//            Response user = request.queryParam("username",newTest.username)
-//                    .get();
-
-            Response user = newCalls.requestCall(basePath).queryParam("username",newTest.username)
-                    .get();
-            System.out.println("user :" +user.asString());
-            JsonPath jsonPath = new JsonPath(user.asString());
-            int userid1 = jsonPath.get("[0].id");
-            System.out.println("userid1 :" +userid1);
-            newTest.userID=userid1;
+    @DisplayName("Verify GET user Posts by userID")
+    @Description("Query GET posts API to return posts posted by the ID linked to a certain username")
+    public void searchPostsByUserId(){
+           newTest.postIDs = newPostsServiceCall.getPostsIdsByUserId("userId", newTest.userID);
         }
 
-        public Response getPosts(){
-            baseURI = newTest.host;
-            basePath = newTest.postsBasePath;
-            String response = get().asString();
-            RequestSpecification request = given();
-            return request.queryParam("userId",newTest.userID)
-                    .get();
+    @Test
+    @DisplayName("Verify GET list of posts actually belongs to the targeted user")
+    @Description("Query GET posts API to return posts posted by the ID linked to a certain username")
+    public void verifyPostsBelongToUser() {
+
+        for (int i = 0; i < newTest.postIDs.size(); i++) {
+            assertThat(Collections.singletonList(newTest.actualUserId.get(i)), equalTo(newTest.userID));
         }
-
-        @Test
-        public void searchPostsByUserID(){
-            Response posts = getPosts();
-            System.out.println("response :" +posts.asString());
-            newTest.postIDs = posts.then().extract().path("id");
-
-//            public ArrayList<Integer> getAllPostsIdsOfAUser(int userId) {
-//                return getWithQueryParam(endpoint, "userId", userId).then().extract().path("id");
-////            }
-
-            System.out.println("PostsID :" +newTest.postIDs);
+    }
+    @Test
+    @DisplayName("Verify GET comments made on a certain Post")
+    @Description("Query GET comments API to return comments made on certain Post")
+    public void getCommentsByPost() {
+        for (int i = 0; i < newTest.postIDs.size(); i++) {
+            newTest.commentsID = newCommentsServiceCall.getCommentsIdByPostId(newTest.postIDs.get(i));
+            newTest.commentsEmail = newCommentsServiceCall.getEmailsByPostId(newTest.postIDs.get(i));
         }
-
-    public Response getCommentsByPost(){
-        baseURI = newTest.host;
-        basePath = newTest.commentsBasePath;
-        String response = get().asString();
-        RequestSpecification request = given();
-        return request.queryParam("postId",newTest.postID)
-                .get();
+        System.out.println(newTest.commentsID);
+        assertThat(newTest.commentsID, hasItem(notNullValue()));
+        assertThat(newTest.commentsEmail, hasItem(notNullValue()));
     }
 
-        @Test
-         public void searchCommentsOnPost (){
-            List<Integer> postIDs = newPostsServiceCall.getPostsIdsByUserId("userId", newTest.userID);
-            System.out.println("User Post IDs :" + postIDs);
-            String response = get().asString();
-            RequestSpecification request = given();
+    @Test
+    @DisplayName("Verify GET comments made on a certain Post")
+    @Description("Query GET comments API to return comments made on certain Post")
+    public void validateCommentsEmails(){
 
-                for (int i=0; i < postIDs.size(); i++ )
-            {
-                ArrayList <Integer> commentsID =  newCommentsServiceCall.getCommentsIdByPostId(postIDs.get(i));
-                ArrayList <String> commentsEmail = newCommentsServiceCall.getEmailsByPostId(postIDs.get(i));
-
-                System.out.println("commentId :" +commentsID);
-                System.out.println("commentEmail :" +commentsEmail);
-                for (int f=0; f< commentsEmail.size(); f++)
+                for (int f=0; f< newTest.commentsEmail.size(); f++)
                 {
-                    boolean isEmailValid = newCommentsServiceCall.emailValidation(commentsEmail.get(f));
-                    System.out.println("Email Is Valid :" +isEmailValid);
-                    System.out.println("comment Email Is :" +commentsEmail.get(f));
+                    boolean isEmailValid = newCommentsServiceCall.emailValidation(newTest.commentsEmail.get(f));
+                    if (isEmailValid != true)
+                    {
+                        System.out.println("This email address has invalid format :" +newTest.commentsEmail.get(f));
+                    }
                 }
-
-            }
-
-        }
+    }
 
     @Test
-    @Description ("Check users API status code")
+    @DisplayName("Verify that the status code of GET users API matches the expected code")
+    @Description ("Check GET users API status code")
     public void checkUsersStatusCode(){
              /* Given The users API that is supposed to return a list of users with their details
                 When I hit the API request
                 Then  I should be getting the desired response code defined for this API,
-                e.g.  200 for success*/
-            baseURI = newTest.host;
-            basePath = newTest.usersBasePath;
-            int statusCode = newTest.usersStatusCode;
-    given ().
-        when().
+                e.g.  200 for success */
+    newUsersServicesCall.requestCall(newUsersServicesCall.usersBasePath).
+            when().
             get().
             then().
-            statusCode(newTest.usersStatusCode);
+            statusCode(equalTo(newUsersServicesCall.usersStatusCode));
     }
+
+    @Test
+    @DisplayName("Verify that the status code of GET users API matches the expected code")
+    @Description ("Check GET Posts API status code")
+    public void checkPostsStatusCode(){
+             /* Given The posts API that is supposed to return a list of posts with their details
+                When I hit the API request
+                Then  I should be getting the desired response code defined for this API,
+                e.g.  200 for success */
+        newPostsServiceCall.requestCall(newPostsServiceCall.postsBasePath).
+                when().
+                get().
+                then().
+                statusCode(equalTo(newPostsServiceCall.postsStatusCode));
+    }
+
+
+    @Test
+    @DisplayName("Verify that the status code of GET comments API matches the expected code")
+    @Description ("Check GET comments API status code")
+    public void checkCommentsStatusCode(){
+             /* Given The comments API that is supposed to return a list of posts with their details
+                When I hit the API request
+                Then  I should be getting the desired response code defined for this API,
+                e.g.  200 for success */
+        newPostsServiceCall.requestCall(newPostsServiceCall.postsBasePath).
+                when().
+                get().
+                then().
+                statusCode(equalTo(newCommentsServiceCall.commentsStatusCode));
+    }
+
 }
+
+
+
