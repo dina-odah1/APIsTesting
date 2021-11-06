@@ -1,11 +1,10 @@
 package APIsCall;
 
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.*;
-import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 public class GlobalAPICalls {
 
@@ -16,14 +15,22 @@ public class GlobalAPICalls {
     public int postsStatusCode = 200;
     public int commentsStatusCode = 200;
 
-    public RequestSpecification requestCall(String apiBasePath)
-    {
+    public RequestSpecification requestCall(String apiBasePath) {
         baseURI = "https://jsonplaceholder.typicode.com";
         basePath = apiBasePath;
         return given();
     }
+
     public Response getAPIResponse(String apiBaseBath) {
         return requestCall(apiBaseBath).get();
+    }
+
+    public void verifyStatusCode(String apiBaseBath, int statusCode) {
+        requestCall(apiBaseBath).
+                when().
+                get().
+                then().
+                statusCode(equalTo(usersStatusCode));
     }
 
 

@@ -9,22 +9,16 @@ import java.util.regex.Pattern;
 
 public class CommentsService extends GlobalAPICalls {
 
-    private final String regExpression = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-
-public ArrayList<Integer> getCommentsIdByPostId (int Id)
-{
-    ArrayList<Integer> commentsIds = requestCall(commentsBasePath).queryParam("postId", Id).get().then().extract().path("id");
-    return  commentsIds;
+    public ArrayList<Integer> getCommentsIdByPostId (int Id) {
+        return requestCall(commentsBasePath).queryParam("postId", Id).get().then().extract().path("id");
 }
 
-public ArrayList<String> getEmailsByPostId (int postId)
-{
-    ArrayList<String> commentEmail = requestCall(commentsBasePath).queryParam("postId", postId).get().then().extract().path("email");
-    return commentEmail;
+public ArrayList<String> getEmailsByPostId (int postId) {
+    return requestCall(commentsBasePath).queryParam("postId", postId).get().then().extract().path("email");
 }
 
-public boolean emailValidation (String email)
-{
+public boolean emailValidation (String email) {
+    String regExpression = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     return Pattern.compile(regExpression)
             .matcher(email)
             .matches();
