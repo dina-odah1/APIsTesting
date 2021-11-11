@@ -1,46 +1,35 @@
 import APIsCall.CommentsService;
-import APIsCall.GlobalAPICalls;
 import APIsCall.PostsService;
 import APIsCall.UsersService;
 
 import io.qameta.allure.*;
 
-import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
-import org.apache.commons.lang3.ObjectUtils;
+import json.model.post.Post;
+import json.model.user.User;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.lang.annotation.Target;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
-
-import static io.restassured.RestAssured.*;
-import static io.restassured.http.ContentType.JSON;
-import static io.restassured.path.json.JsonPath.from;
-import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class APIsTests {
 
-    TestData newTest = new TestData();
-    CommentsService newCommentsServiceCall = new CommentsService();
     UsersService newUsersServicesCall = new UsersService();
     PostsService newPostsServiceCall = new PostsService();
+    CommentsService newCommentsServiceCall = new CommentsService();
+
+    // shared values
+    User currentUser;
+    Post[] userPosts;
+    List<Integer> postIDs;
+    String userName = "Delphine";
+
+    public APIsTests() {
+       currentUser = getUserData();
+       userPosts = getUserPosts();
+       postIDs = searchPostsByUserId();
+  }
 
     @Test
     @DisplayName("Verify GET users by username")
@@ -49,13 +38,8 @@ public class APIsTests {
     @Epic("Users API Tests")
     @Story("Story name: Querying users data against certain username should return all relevant user's data")
     @BeforeClass
-    private void getUserData() {
-        Response userResponse = newUsersServicesCall.getUserDataByUsername(newTest.userName);
-        JsonPath jsonPath = userResponse.jsonPath();
-        newTest.actualUserName = jsonPath.get("username");
-        newTest.userID = jsonPath.get("id");
-        newTest.name = jsonPath.get("name");
-        newTest.email = jsonPath.get("email");
+    private User getUserData() {
+        return newUsersServicesCall.getUserDataByUsername(userName);
     }
 
     @Test
@@ -65,13 +49,8 @@ public class APIsTests {
     @Epic("POSTS API Tests")
     @Story("Story name: Posts made by certain user should be successfully returned upon querying against certain userID")
     @BeforeClass
-    private void getUserPosts() {
-        Response postResponse = newPostsServiceCall.getPostsByUserId("userId", newTest.userID);
-        JsonPath jsonPath = postResponse.jsonPath();
-        newTest.title = jsonPath.get("title");
-        newTest.actualUserId = jsonPath.get("userId");
-        newTest.body = jsonPath.get("body");
-        newTest.postIDs = jsonPath.get("id");
+    private Post[] getUserPosts() {
+        return newPostsServiceCall.getPostsByUserId("userId", currentUser.getId());
     }
 
     @Test
@@ -80,9 +59,8 @@ public class APIsTests {
     @Description("Query get Users API with x username and verify that the returned username matches given username")
     @Epic("Users API Tests")
     @Story("Story name: Upon querying the GET users API with username, username returned should match the given username")
-
     public void verifySearchByUsername() {
-       assertThat(newTest.actualUserName, equalTo(newTest.userName));
+       assertThat(currentUser.getUsername(), equalTo(userName));
     }
 
     @Test
@@ -90,8 +68,8 @@ public class APIsTests {
     @Description("Query GET posts API to return posts posted by the ID linked to a certain username")
     @Epic("POSTS API Tests")
     @Story("Story name: Querying Posts API with certain UserId should return posts made by that user")
-    public void searchPostsByUserId() {
-           newTest.postIDs = newPostsServiceCall.getPostsIdsByUserId("userId", newTest.userID);
+    public List<Integer> searchPostsByUserId() {
+        return newPostsServiceCall.getPostsIdsByUserId("userId", currentUser.getId());
     }
 
     @Test
@@ -100,8 +78,8 @@ public class APIsTests {
     @Epic("POSTS API Tests")
     @Story("Story name: Post/s returned by POSTS API should be linked to an ID that matches the given user's ID")
     public void verifyPostsBelongToUser() {
-        for (int i = 0; i < newTest.postIDs.size(); i++) {
-            assertThat(Collections.singletonList(newTest.actualUserId.get(i)), equalTo(newTest.userID));
+        for (Post post : userPosts) {
+            assertThat(post.getUserId(), equalTo(currentUser.getId()));
         }
     }
 
@@ -111,12 +89,13 @@ public class APIsTests {
     @Epic("Comments API Tests")
     @Story("Story name: Querying comments GET API with certain postid should return comments made on that post")
     public void getCommentsByPost() {
-        for (int i = 0; i < newTest.postIDs.size(); i++) {
-            newTest.commentsID = newCommentsServiceCall.getCommentsIdByPostId(newTest.postIDs.get(i));
-            newTest.commentsEmail = newCommentsServiceCall.getEmailsByPostId(newTest.postIDs.get(i));
+        for (Post post : userPosts) {
+            List<Integer> commentsID = newCommentsServiceCall.getCommentsIdByPostId(post.getId());
+            List<String> commentsEmail = newCommentsServiceCall.getEmailsByPostId(post.getId());
+
+            assertThat(commentsID, hasItem(notNullValue()));
+            assertThat(commentsEmail, hasItem(notNullValue()));
         }
-        assertThat(newTest.commentsID, hasItem(notNullValue()));
-        assertThat(newTest.commentsEmail, hasItem(notNullValue()));
     }
 
     @Test
@@ -125,11 +104,13 @@ public class APIsTests {
     @Epic("Comments API Tests")
     @Story("Story name: Email address for users who made certain comment should be valid")
     public void validateCommentsEmails() {
-                for (int f=0; f< newTest.commentsEmail.size(); f++)
-                {
-                    boolean isEmailValid = newCommentsServiceCall.emailValidation(newTest.commentsEmail.get(f));
-                    assertThat(isEmailValid,equalTo(true));
-                }
+        for (Post post : userPosts) {
+            List<String> commentsEmail = newCommentsServiceCall.getEmailsByPostId(post.getId());
+            for (String comment : commentsEmail) {
+                boolean isEmailValid = newCommentsServiceCall.emailValidation(comment);
+                assertThat(isEmailValid,equalTo(true));
+            }
+        }
     }
 
     @Test
@@ -173,7 +154,6 @@ public class APIsTests {
                 e.g.  200 for success */
         newCommentsServiceCall.verifyStatusCode(newCommentsServiceCall.commentsBasePath, newCommentsServiceCall.commentsStatusCode);
     }
-
 }
 
 
