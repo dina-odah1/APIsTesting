@@ -4,6 +4,7 @@ import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.BeforeClass;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import static io.restassured.RestAssured.*;
 public class TestData {
 
     // Input Data that are meant to query with
-    List<String> userName = List.of("Delphine");
+    List<String> userName = Arrays.asList("Delphine");
 
 
     // Parameters returned by APIs response

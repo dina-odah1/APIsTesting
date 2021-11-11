@@ -30,7 +30,7 @@ public class GlobalAPICalls {
                 when().
                 get().
                 then().
-                statusCode(equalTo(usersStatusCode));
+                statusCode(equalTo(statusCode));
     }
 
 
