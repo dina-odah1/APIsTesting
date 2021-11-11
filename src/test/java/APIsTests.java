@@ -92,7 +92,7 @@ public class APIsTests {
     @Story("Story name: Querying Posts API with certain UserId should return posts made by that user")
     public void searchPostsByUserId() {
            newTest.postIDs = newPostsServiceCall.getPostsIdsByUserId("userId", newTest.userID);
-        }
+    }
 
     @Test
     @DisplayName("Verify GET list of posts actually belongs to the targeted user")
@@ -100,7 +100,6 @@ public class APIsTests {
     @Epic("POSTS API Tests")
     @Story("Story name: Post/s returned by POSTS API should be linked to an ID that matches the given user's ID")
     public void verifyPostsBelongToUser() {
-
         for (int i = 0; i < newTest.postIDs.size(); i++) {
             assertThat(Collections.singletonList(newTest.actualUserId.get(i)), equalTo(newTest.userID));
         }
@@ -126,7 +125,6 @@ public class APIsTests {
     @Epic("Comments API Tests")
     @Story("Story name: Email address for users who made certain comment should be valid")
     public void validateCommentsEmails() {
-
                 for (int f=0; f< newTest.commentsEmail.size(); f++)
                 {
                     boolean isEmailValid = newCommentsServiceCall.emailValidation(newTest.commentsEmail.get(f));

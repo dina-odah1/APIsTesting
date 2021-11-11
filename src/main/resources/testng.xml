@@ -3,17 +3,12 @@
 <suite name="Mobiquity APIs Testing">
 
     <listeners>
-<!--        <listener class-name="ExtentReportListner.ExtentReportsTest" />-->
-        <listener class-name="Listners.AllureReportListner" />
+        <listener class-name="Listeners.AllureReportListener" />
     </listeners>
 
-
-    <test name="Mpbiquity APIs TestCases">
+    <test name="Mobiquity APIs TestCases">
         <classes>
-            <class name="APIsTests"></class>
-<!--            <class name="com.crm.qa.testcases.HomePageTest"></class>-->
-<!--            <class name="com.crm.qa.testcases.ContactsPageTest"></class>-->
-
+            <class name="APIsTests"/>
         </classes>
     </test>
 </suite>
