@@ -3,19 +3,10 @@ package json.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonInclude(JsonInclude.Include.CUSTOM)
-@JsonPropertyOrder({
-        "id",
-        "name",
-        "username",
-        "email"
-})
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
-
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("name")
@@ -24,6 +15,14 @@ public class User {
     private String username;
     @JsonProperty("email")
     private String email;
+    @JsonProperty("address")
+    private Address address;
+    @JsonProperty("phone")
+    private String phone;
+    @JsonProperty("website")
+    private String website;
+    @JsonProperty("company")
+    private Company company;
 
     @JsonProperty("id")
     public Integer getId() {
@@ -64,4 +63,45 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @JsonProperty("address")
+    public Address getAddress() {
+        return address;
+    }
+
+    @JsonProperty("address")
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    @JsonProperty("phone")
+    public String getPhone() {
+        return phone;
+    }
+
+    @JsonProperty("phone")
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    @JsonProperty("website")
+    public String getWebsite() {
+        return website;
+    }
+
+    @JsonProperty("website")
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    @JsonProperty("company")
+    public Company getCompany() {
+        return company;
+    }
+
+    @JsonProperty("company")
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
 }

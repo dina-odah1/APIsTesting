@@ -1,16 +1,27 @@
 package APIsCall;
 
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import json.model.user.*;
+import utils.configuration.ConfigLoader;
+import static org.hamcrest.Matchers.*;
 
-public class UsersService extends GlobalAPICalls{
+public class UsersService extends GlobalAPICalls {
+    private final String usersBasePath = ConfigLoader.getInstance().getUsersBasePath();
 
+    public Response getUserDataByUsername(String userName) {
+        Response response = requestCall(usersBasePath).queryParam("username", userName).get();
+        response.then().body("username", not(empty()));
+        return response;
+    }
 
-public User getUserDataByUsername ( String userName) {
-    return requestCall(usersBasePath).
-            queryParam("username", userName).
-            get().then().contentType(ContentType.JSON).extract().as(User[].class)[0];
-}
+    public User getUserObjectByUsername(String userName) {
+        return getUserDataByUsername(userName).
+                then().
+                contentType(ContentType.JSON).
+                extract().
+                as(User[].class)[0];
+    }
 
 }
 

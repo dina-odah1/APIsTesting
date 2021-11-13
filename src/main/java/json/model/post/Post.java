@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Post {
 
@@ -24,8 +23,9 @@ public class Post {
     }
 
     @JsonProperty("userId")
-    public void setUserId(Integer userId) {
+    public Post setUserId(Integer userId) {
         this.userId = userId;
+        return this;
     }
 
     @JsonProperty("id")
@@ -34,8 +34,9 @@ public class Post {
     }
 
     @JsonProperty("id")
-    public void setId(Integer id) {
+    public Post setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     @JsonProperty("title")
@@ -44,8 +45,9 @@ public class Post {
     }
 
     @JsonProperty("title")
-    public void setTitle(String title) {
+    public Post setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     @JsonProperty("body")
@@ -54,8 +56,8 @@ public class Post {
     }
 
     @JsonProperty("body")
-    public void setBody(String body) {
+    public Post setBody(String body) {
         this.body = body;
+        return this;
     }
-
 }

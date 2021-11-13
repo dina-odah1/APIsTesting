@@ -1,18 +1,11 @@
 package json.model.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "postId",
-    "id",
-    "name",
-    "email",
-    "body"
-})
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Comment {
 
     @JsonProperty("postId")
@@ -32,8 +25,9 @@ public class Comment {
     }
 
     @JsonProperty("postId")
-    public void setPostId(Integer postId) {
+    public Comment setPostId(Integer postId) {
         this.postId = postId;
+        return this;
     }
 
     @JsonProperty("id")
@@ -42,8 +36,9 @@ public class Comment {
     }
 
     @JsonProperty("id")
-    public void setId(Integer id) {
+    public Comment setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     @JsonProperty("name")
@@ -52,8 +47,9 @@ public class Comment {
     }
 
     @JsonProperty("name")
-    public void setName(String name) {
+    public Comment setName(String name) {
         this.name = name;
+        return this;
     }
 
     @JsonProperty("email")
@@ -62,8 +58,9 @@ public class Comment {
     }
 
     @JsonProperty("email")
-    public void setEmail(String email) {
+    public Comment setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     @JsonProperty("body")
@@ -72,8 +69,8 @@ public class Comment {
     }
 
     @JsonProperty("body")
-    public void setBody(String body) {
+    public Comment setBody(String body) {
         this.body = body;
+        return this;
     }
-
 }
