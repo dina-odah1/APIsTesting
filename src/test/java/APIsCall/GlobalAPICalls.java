@@ -12,11 +12,13 @@ import io.restassured.specification.ResponseSpecification;
 import utils.configuration.ConfigLoader;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class GlobalAPICalls {
-    public static String baseUri = ConfigLoader.getInstance().getBaseUri();
+    private static final String baseUri = ConfigLoader.getInstance().getBaseUri();
 
+    /* GET APIs Request Spec */
     public static RequestSpecification getRequestSpec(String apiBasePath){
         return new RequestSpecBuilder().
                 setBaseUri(baseUri).
@@ -26,13 +28,14 @@ public class GlobalAPICalls {
                 log(LogDetail.ALL).
                 build();
     }
-
+    /* GET APIs Response Spec */
     public static ResponseSpecification getResponseSpec(){
         return new ResponseSpecBuilder().
                 log(LogDetail.ALL).
                 build();
     }
 
+    /* Trigger GET APIs Request Spec */
     public static RequestSpecification requestCall(String apiBasePath) {
         return given(getRequestSpec(apiBasePath));
     }
@@ -45,6 +48,7 @@ public class GlobalAPICalls {
                 response();
     }
 
+    @Step
     public Response postAPIResponse(String apiBaseBath, Object reqPost) {
         return requestCall(apiBaseBath).
                 body(reqPost).
@@ -54,6 +58,7 @@ public class GlobalAPICalls {
                 response();
     }
 
+    @Step
     public Response deleteAPIResponse(String apiBaseBath, Integer postId) {
         return requestCall(apiBaseBath).
                 when().delete(String.valueOf(postId)).
@@ -62,6 +67,7 @@ public class GlobalAPICalls {
                 response();
     }
 
+    @Step
     public Response putAPIResponse(String apiBaseBath, Integer postId, Object reqPost) {
         return requestCall(apiBaseBath).
                 body(reqPost).
@@ -71,15 +77,8 @@ public class GlobalAPICalls {
                 response();
     }
 
-    @Step
-    public void verifyStatusCode(String apiBaseBath, int statusCode) {
-        requestCall(apiBaseBath).
-                when().
-                get().
-                then().
-                log().
-                all().
-                statusCode(equalTo(statusCode));
+    public void verifyStatusCode(Response response, int statusCode) {
+      assertThat(response.statusCode(), equalTo(statusCode));
     }
 
 }

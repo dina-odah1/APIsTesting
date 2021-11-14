@@ -1,45 +1,45 @@
 package APIsCall;
 
-import io.restassured.http.ContentType;
+import io.qameta.allure.Step;
+import io.restassured.response.Response;
 import json.model.comment.Comment;
 import utils.configuration.ConfigLoader;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CommentsService extends GlobalAPICalls {
+
+    private final String commentsBasePath = ConfigLoader.getInstance().getCommentsBasePath();
+    private final Integer getSuccessCode = ConfigLoader.getInstance().getSuccessCode();
+
     public Comment[] getCommentsByPostId (int postId) {
-        return requestCall(ConfigLoader.getInstance().getCommentsBasePath()).queryParam("postId", postId).get()
-                .then().contentType(ContentType.JSON).extract().as(Comment[].class);
+        Response response = requestCall(commentsBasePath).queryParam("postId", postId).get();
+        verifyStatusCode(response, getSuccessCode);
+        return response.then().extract().as(Comment[].class);
     }
 
+    @Step
     public List<Integer> getCommentsIdByPostId (int postId) {
-        return requestCall(ConfigLoader.getInstance().getCommentsBasePath()).queryParam("postId", postId).get().then().extract().path("id");
-
-//        Comment[] comments = getCommentsByPostId(postId);
-//        return  Arrays.asList(comments).stream()
-//                .map(Comment::getId)
-//                .collect(Collectors.toList());
+        Response response = requestCall(commentsBasePath).
+                queryParam("postId", postId).get();
+        verifyStatusCode(response, getSuccessCode);
+        return response.then().extract().path("id");
     }
 
-public List<String> getEmailsByPostId (int postId) {
-    return requestCall(ConfigLoader.getInstance().getCommentsBasePath()).queryParam("postId", postId).get().then().extract().path("email");
+    @Step
+    public List<String> getEmailsByPostId (int postId) {
+        Response response = requestCall(commentsBasePath).queryParam("postId", postId).get();
+        verifyStatusCode(response, getSuccessCode);
+        return response.then().extract().path("email");
+    }
 
-//    Comment[] comments = getCommentsByPostId(postId);
-//    return   Arrays.asList(comments).stream()
-//            .map(Comment::getEmail)
-//            .collect(Collectors.toList());
-}
-
-public boolean emailValidation (String email) {
-    String regExpression = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    return Pattern.compile(regExpression)
-            .matcher(email)
-            .matches();
-
-}
+    @Step
+    public boolean emailValidation (String email) {
+        String regExpression = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return Pattern.compile(regExpression)
+                .matcher(email)
+                .matches();
+    }
 
 }
 

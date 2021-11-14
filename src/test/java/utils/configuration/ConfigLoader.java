@@ -65,4 +65,16 @@ public class ConfigLoader {
             else throw new RuntimeException("property updateSuccessCode is not specified in the config.properties file");
         }
 
+        public String getPostBody(){
+            String prop = properties.getProperty("postBody");
+            if(prop != null) return prop;
+            else throw new RuntimeException("property postBody is not specified in the config.properties file");
+        }
+
+        public String getPostTitle(){
+            String prop = properties.getProperty("postTitle");
+            if(prop != null) return prop;
+            else throw new RuntimeException("property postTitle is not specified in the config.properties file");
+        }
+
 }
