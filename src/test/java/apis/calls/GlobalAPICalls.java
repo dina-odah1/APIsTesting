@@ -19,7 +19,7 @@ public class GlobalAPICalls {
     private static final String baseUri = ConfigLoader.getInstance().getBaseUri();
 
     /* GET APIs Request Spec */
-    public RequestSpecification getRequestSpec(String apiBasePath){
+    public RequestSpecification getRequestSpec(String apiBasePath) {
         return new RequestSpecBuilder().
                 setBaseUri(baseUri).
                 setBasePath(apiBasePath).
@@ -29,7 +29,7 @@ public class GlobalAPICalls {
                 build();
     }
     /* GET APIs Response Spec */
-    public ResponseSpecification getResponseSpec(){
+    public ResponseSpecification getResponseSpec() {
         return new ResponseSpecBuilder().
                 log(LogDetail.ALL).
                 build();
@@ -38,14 +38,6 @@ public class GlobalAPICalls {
     /* Trigger GET APIs Request Spec */
     public RequestSpecification requestCall(String apiBasePath) {
         return given(getRequestSpec(apiBasePath));
-    }
-
-    public Response getAPIResponse(String apiBaseBath) {
-        return requestCall(apiBaseBath).
-                when().get().
-                then().spec(getResponseSpec()).
-                extract().
-                response();
     }
 
     @Step
@@ -80,5 +72,4 @@ public class GlobalAPICalls {
     public void verifyStatusCode(Response response, int statusCode) {
       assertThat(response.statusCode(), equalTo(statusCode));
     }
-
 }

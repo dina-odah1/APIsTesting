@@ -23,7 +23,7 @@ public class NegativeTests {
     /* Give a user who is trying to search with invalid parameter name
      * When I query the GET users API with incorrect parameter ID
      * Then I should be not be getting a response */
-    public void queryAPIWithInvalidParameter(){
+    public void queryAPIWithInvalidParameter() {
         Response response = newUserServices.requestCall(ConfigLoader.getInstance().
                 getUsersBasePath()).queryParam(ConfigLoader.getInstance().
                 getInvalidParm(), ConfigLoader.getInstance().getUsername()).get();
@@ -38,7 +38,7 @@ public class NegativeTests {
     /* Give a user who wants to search for a user that doesn't exist
      * When I query the GET posts API with that ID
      * Then I should be getting not found error with no response */
-    public void queryWithInvalidBasePath(){
+    public void queryWithInvalidBasePath() {
          Response response = newPostService.requestCall(ConfigLoader.getInstance().
                         getPostsBasePath()).get("/"+ConfigLoader.getInstance().getRandomPostId());
         newPostService.verifyStatusCode(response, ConfigLoader.getInstance().getNotFound());
@@ -53,7 +53,7 @@ public class NegativeTests {
     /* Give a user who wants to update an existing post
      * When I try to an update a post with unexpected body parameters
      * Then my post update shouldn't be accepted  */
-    public void putWithInvalidBody(){
+    public void putWithInvalidBody() {
         Response response = newPostService.requestCall(ConfigLoader.getInstance().
                 getPostsBasePath()).body("{\n" +
                 "    \"image\": \"org.example\"\n" +
@@ -70,7 +70,7 @@ public class NegativeTests {
     /* Give a user who wants to submit a new post
      * When I try to submit  post with no content
      * Then I shouldn't be able to submit that post  */
-    public void postWithInvalidBody(){
+    public void postWithInvalidBody() {
         Response response = newPostService.requestCall(ConfigLoader.getInstance().getPostsBasePath()).
                 post();
         Assert.assertNotEquals(response.getStatusCode(), ConfigLoader.getInstance().getCreateSuccessCode());
@@ -84,11 +84,10 @@ public class NegativeTests {
     /* Give a user who has specific username
      * When I query the GET users API with inaccurate (all capital or small) or invalid username
      * Then I get no data as the username is case-sensitive */
-    public void searchUserCapitalUsername(){
+    public void searchUserCapitalUsername() {
         String usernameCapitalized = ConfigLoader.getInstance().getUsername().toUpperCase();
         Response response = newUserServices.requestCall(ConfigLoader.getInstance().
                 getUsersBasePath()).queryParam("username",usernameCapitalized).get();
         response.then().body("", Matchers.hasSize(0));
     }
-
 }

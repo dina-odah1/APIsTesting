@@ -38,8 +38,7 @@ public class PostsService extends GlobalAPICalls {
     }
 
     @Step ("Build a new Post object")
-    public Post postBuilder (Integer Id)
-    {
+    public Post postBuilder (Integer Id) {
         String postBody = ConfigLoader.getInstance().getPostBody();
         String postTitle = ConfigLoader.getInstance().getPostTitle();
         return new Post().setUserId(Id).setBody(postBody).setTitle(postTitle);

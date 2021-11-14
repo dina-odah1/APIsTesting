@@ -12,25 +12,26 @@ public class CommentsService extends GlobalAPICalls {
     private final String commentsBasePath = ConfigLoader.getInstance().getCommentsBasePath();
     private final Integer getSuccessCode = ConfigLoader.getInstance().getSuccessCode();
 
-    public Comment[] getCommentsByPostId (int postId) {
-        Response response = requestCall(commentsBasePath).queryParam("postId", postId).get();
+    private Response getCommentsResponse(int postId) {
+        Response response = requestCall(commentsBasePath).
+                queryParam("postId", postId).get();
         verifyStatusCode(response, getSuccessCode);
-        return response.then().extract().as(Comment[].class);
+        return response;
+    }
+
+    // Not reused now but will be reused in the future.
+    public Comment[] getCommentsByPostId (int postId) {
+        return getCommentsResponse(postId).then().extract().as(Comment[].class);
     }
 
     @Step
     public List<Integer> getCommentsIdByPostId (int postId) {
-        Response response = requestCall(commentsBasePath).
-                queryParam("postId", postId).get();
-        verifyStatusCode(response, getSuccessCode);
-        return response.then().extract().path("id");
+        return getCommentsResponse(postId).then().extract().path("id");
     }
 
     @Step
     public List<String> getEmailsByPostId (int postId) {
-        Response response = requestCall(commentsBasePath).queryParam("postId", postId).get();
-        verifyStatusCode(response, getSuccessCode);
-        return response.then().extract().path("email");
+        return getCommentsResponse(postId).then().extract().path("email");
     }
 
     @Step

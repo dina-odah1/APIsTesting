@@ -190,7 +190,6 @@ public class APIsTests {
         newPostsServiceCall.requestCall(postsBasePath).get("/"+userPosts[0].getId()).
                 then().body("id", Matchers.hasSize(0));
     }
-
 }
 
 
