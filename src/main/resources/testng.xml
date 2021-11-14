@@ -3,12 +3,13 @@
 <suite name="Mobiquity APIs Testing">
 
     <listeners>
-        <listener class-name="Listeners.AllureReportListener" />
+        <listener class-name="listeners.AllureReportListener" />
     </listeners>
 
     <test name="Mobiquity APIs TestCases">
         <classes>
-            <class name="APIsTests"/>
+            <class name="main.apis.tests.APIsTests"/>
+            <class name="main.apis.tests.NegativeTests"/>
         </classes>
     </test>
 </suite>

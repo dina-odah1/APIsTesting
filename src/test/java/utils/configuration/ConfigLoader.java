@@ -77,4 +77,24 @@ public class ConfigLoader {
             else throw new RuntimeException("property postTitle is not specified in the config.properties file");
         }
 
+        public String getInvalidParm()
+        {
+            String prop = properties.getProperty("invalidParameter");
+            if(prop != null) return prop;
+            else throw new RuntimeException("property postTitle is not specified in the config.properties file");
+        }
+
+        public String getRandomPostId()
+        {
+            String prop = properties.getProperty("randomPostId");
+            if(prop != null) return prop;
+            else throw new RuntimeException("property postTitle is not specified in the config.properties file");
+        }
+
+        public Integer getNotFound()
+        {
+            Integer prop = Integer.parseInt(properties.getProperty("notFoundCode"));
+            if(prop != null) return prop;
+            else throw new RuntimeException("property postTitle is not specified in the config.properties file");
+        }
 }
