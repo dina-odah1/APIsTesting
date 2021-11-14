@@ -58,6 +58,6 @@ The test coverage so far includes a main flow that involves 3 main APIs (Users, 
 - To lunch the allure report, execute this command allure `serve allure-results on the terminal`
 
 ## Demo: 
-![This is an image](https://github.com/dina-student/APIsFramework/blob/master/Overview.png)
-![This is an image](https://github.com/dina-student/APIsFramework/blob/master/Suites.png)
+![This is an image](https://github.com/dina-student/MobiquityAPIsTesting/blob/master/TestSuits.png)
+![This is an image](https://github.com/dina-student/MobiquityAPIsTesting/blob/master/Coverage.png)
  
