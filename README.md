@@ -53,5 +53,5 @@ In order to run the project:
 - To lunch the allure report, execute this command allure serve allure-results
 
  
-![This is an image](file:///Users/dinawaleed/documents/suites.png)
+![This is an image](https://github.com/dina-student/APIsFramework/blob/master/Overview.png)
  
