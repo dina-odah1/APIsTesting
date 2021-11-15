@@ -55,7 +55,7 @@ public class APIsTests {
         postIDs = newPostsServiceCall.getPostsIdsByUserId("userId", currentUser.getId());
     }
 
-    @Test (description = "Verify Posts returned belong to the targeted user")
+    @Test (priority = 1, description = "Verify Posts returned belong to the targeted user")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Verify GET list of posts actually belongs to the targeted user")
     @Epic("Posts API Tests")
@@ -69,7 +69,7 @@ public class APIsTests {
         }
     }
 
-    @Test (description = "Verify GET comments made on a certain Post")
+    @Test (priority = 2, description = "Verify GET comments made on a certain Post")
     @Severity(SeverityLevel.NORMAL)
     @Description("Query GET comments API to return comments made on certain Post")
     @Epic("Comments API Tests")
@@ -86,7 +86,7 @@ public class APIsTests {
         }
     }
 
-    @Test(description = "Verify comments emails made on Post are valid")
+    @Test(priority = 3, description = "Verify comments emails made on Post are valid")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify emails linked to comments made on certain posts are valid")
     @Epic("Comments API Tests")
@@ -104,7 +104,7 @@ public class APIsTests {
         }
     }
 
-    @Test(description = "Verify the ability to post a new post")
+    @Test(priority = 4, description = "Verify the ability to post a new post")
     @Severity(SeverityLevel.CRITICAL)
     @Description ("User should be able to Post new post")
     @Epic("Posts API Tests")
@@ -121,7 +121,7 @@ public class APIsTests {
         newPostsServiceCall.assertPostEqual(postAPIResponse.as(Post.class), reqPost);
     }
 
-    @Test (description = "Verify new post is added to existing ones")
+    @Test (priority = 5, description = "Verify new post is added to existing ones")
     @Severity(SeverityLevel.CRITICAL)
     @Description ("Newly posted post should be returned in the GET posts API")
     @Issue("MBQ-111")
@@ -139,7 +139,7 @@ public class APIsTests {
         assertThat(updatedPostIds, hasItem(responsePost.getId()));
     }
 
-    @Test (description = "Verify updating an existing post")
+    @Test (priority = 6, description = "Verify updating an existing post")
     @Severity(SeverityLevel.NORMAL)
     @Description ("User should be able to update an existing post")
     @Epic("Posts API Tests")
@@ -156,7 +156,7 @@ public class APIsTests {
         newPostsServiceCall.assertPostEqual(putAPIResponse.as(Post.class), reqPost);
     }
 
-    @Test (description = "Verify existing post is updated")
+    @Test (priority = 7, description = "Verify existing post is updated")
     @Severity(SeverityLevel.NORMAL)
     @Description ("The update to an existing post should be reflected in the GET posts API")
     @Issue("MBQ-112")
@@ -173,7 +173,7 @@ public class APIsTests {
         newPostsServiceCall.assertPostEqual(updatedPost, reqPost);
     }
 
-    @Test (description = "Verify Delete post functionality")
+    @Test (priority = 8, description = "Verify Delete post functionality")
     @Severity(SeverityLevel.NORMAL)
     @Description ("Users should be able to delete previously posted posts")
     @Issue("MBQ-112")
@@ -191,6 +191,3 @@ public class APIsTests {
                 then().body("id", Matchers.hasSize(0));
     }
 }
-
-
-
