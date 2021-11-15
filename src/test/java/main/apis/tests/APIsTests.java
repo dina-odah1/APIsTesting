@@ -116,8 +116,8 @@ public class APIsTests {
         Post reqPost = newPostsServiceCall.postBuilder(currentUser.getId());
         Response postAPIResponse = newPostsServiceCall.postAPIResponse(ConfigLoader.
                 getInstance().getPostsBasePath(), reqPost);
-        assertThat(postAPIResponse.statusCode(), equalTo(ConfigLoader.getInstance().
-                getCreateSuccessCode()));
+        newPostsServiceCall.verifyStatusCode(postAPIResponse, ConfigLoader.getInstance().
+                getCreateSuccessCode());
         newPostsServiceCall.assertPostEqual(postAPIResponse.as(Post.class), reqPost);
     }
 
