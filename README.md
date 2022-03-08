@@ -1,4 +1,4 @@
-# MobiquityAPIsTesting
+# APIsTesting
 
 ## Overview:
 This project makes an initial Skelton for APIs testing framework using rest assured as the core library and Java as programming language.
